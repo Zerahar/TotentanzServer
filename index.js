@@ -12,7 +12,8 @@ app.listen(port, () => {
 })
 
 var mongo = require('mongodb')
-const url = `mongodb+srv://dbAdmin:${pass}@cluster0.q4dhm.mongodb.net/app?retryWrites=true&w=majority`
+const dev_db_url = `mongodb+srv://dbAdmin:${pass}@cluster0.q4dhm.mongodb.net/app?retryWrites=true&w=majority`
+var url = process.env.MONGODB_URI || dev_db_url;
 mongo.MongoClient.connect(url, function (err, client) {
   if (err) throw err
 
