@@ -437,7 +437,7 @@ mongo.MongoClient.connect(url, function (err, client) {
 
 const WebSocket = require('ws');
 
-const wss = new WebSocket.Server({ port: 1337 });
+const wss = new WebSocket.Server(app);
 
 wss.on('connection', function connection(ws) {
   console.log("New connection")
