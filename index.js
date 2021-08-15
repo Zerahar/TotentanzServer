@@ -4,9 +4,6 @@ const port = process.env.PORT || 3002
 const pass = "dbpass123"
 const cors = require('cors')
 
-app.get('/', (req, res) => {
-  res.send('Hello World!')
-})
 app.use(express.json())
 app.listen(port, () => {
   console.log(`Server started!`)
@@ -437,8 +434,7 @@ mongo.MongoClient.connect(url, function (err, client) {
 
 const { Server } = require('ws');
 
-const wss = new Server({ app });
-
+const wss = new Server()
 
 wss.on('connection', function connection(ws) {
   console.log("New connection")
