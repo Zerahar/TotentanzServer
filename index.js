@@ -1,4 +1,5 @@
 const express = require('express')
+const https = require(https)
 const app = express()
 const port = 3002
 const pass = "dbpass123"
@@ -7,7 +8,7 @@ app.get('/', (req, res) => {
   res.send('Hello World!')
 })
 app.use(express.json())
-app.listen(port, () => {
+https.createServer(app).listen(port, () => {
   console.log(`Example app listening at http://localhost:${port}`)
 })
 
