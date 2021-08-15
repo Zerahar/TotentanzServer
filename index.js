@@ -437,7 +437,7 @@ mongo.MongoClient.connect(url, function (err, client) {
 
 const { Server } = require('ws');
 
-const wss = new Server({ server });
+const wss = new Server({ app });
 
 
 wss.on('connection', function connection(ws) {
