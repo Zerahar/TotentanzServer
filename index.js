@@ -435,9 +435,10 @@ mongo.MongoClient.connect(url, function (err, client) {
   })
 })
 
-const WebSocket = require('ws');
+const { Server } = require('ws');
 
-const wss = new WebSocket({ app });
+const wss = new Server({ server });
+
 
 wss.on('connection', function connection(ws) {
   console.log("New connection")
