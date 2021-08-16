@@ -11,6 +11,8 @@ app.listen(port, () => {
 
 app.use(cors());
 
+app.get('/', (req, res) => { res.send('Hello World') })
+
 var mongo = require('mongodb')
 const dev_db_url = `mongodb+srv://dbAdmin:${pass}@cluster0.q4dhm.mongodb.net/app?retryWrites=true&w=majority`
 var url = process.env.MONGODB_URI || dev_db_url;
