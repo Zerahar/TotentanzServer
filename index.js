@@ -1,17 +1,14 @@
-const express = require('express')
-const app = express()
-const port = process.env.PORT || 3002
+
+const express = require('express');
 const pass = "dbpass123"
-const cors = require('cors')
+const { Server } = require('ws');
 
+const PORT = process.env.PORT || 3000;
+const INDEX = '/index.html';
+
+const app = express()
 app.use(express.json())
-app.listen(port, () => {
-  console.log(`Server started!`)
-})
-
-app.use(cors());
-
-app.get('/', (req, res) => { res.send('Hello World') })
+  .listen(PORT, () => console.log(`Listening on ${PORT}`));
 
 var mongo = require('mongodb')
 const dev_db_url = `mongodb+srv://dbAdmin:${pass}@cluster0.q4dhm.mongodb.net/app?retryWrites=true&w=majority`
@@ -434,76 +431,77 @@ mongo.MongoClient.connect(url, function (err, client) {
   })
 })
 
-const { Server } = require('ws');
-
-const wss = new Server({ server: app })
-
-wss.on('connection', function connection(ws) {
-  console.log("New connection")
-  ws.on('message', function incoming(rawdata) {
-    const data = JSON.parse(rawdata)
-    // The new connection sent its identifications
-    if (data.type === "new") {
-      console.log("New connection identity: ", data)
-      ws.characterId = data.id || "admin"
-    }
-    // User opened a chat
-    if (data.type === "openChat") {
-      console.log("Chat was opened, id: ", data.chat)
-      // send back chat history when chat is opened
-      mongo.MongoClient.connect(url, function (err, dbclient) {
-        if (err) throw err
-        const db = dbclient.db('app')
-        db.collection('messages').find({ chat: data.chat }).toArray(function (err, result) {
-          if (err) throw err
-          console.log("Sent chat history")
-          ws.send(JSON.stringify({ type: 'history', data: result }));
-          db.close
-        })
-      })
-    }
-    // User sent a message in chat
-    if (data.type === "message") {
-      console.log("Received a message: ", data)
-      // Modify for database saving
-      var obj = {
-        time: (new Date()).getTime(),
-        text: data.text,
-        author: data.name,
-        authorId: data.characterId,
-        chat: data.chat._id
-      };
-      mongo.MongoClient.connect(url, function (err, client) {
-        if (err) throw err
-        const db = client.db('app')
-        db.collection('messages').insertOne(obj, function (err, result) {
-          if (err) throw err
-          db.close
-        })
-      })
-      console.log("Saved message to database")
-    }
-    wss.clients.forEach(function each(client) {
-
-      // User sent a message in chat
-      if (data.type === "message") {
-        // Modify for database saving
-        var obj = {
-          time: (new Date()).getTime(),
-          text: data.text,
-          author: data.name,
-          authorId: data.id,
-          chat: data.chat._id
-        };
-        // Broadcast if part of the chat
-        if (client.readyState === WebSocket.OPEN && (client.characterId === "admin" || data.chat.participants.find(a => a._id == client.characterId))) {
-          console.log("Broadcasted to " + client.characterId)
-          const packet = { type: "message", data: obj }
-          client.send(JSON.stringify(packet));
-        }
-      }
-    });
-  });
-
-
+const wss = new Server({ server: app });
+wss.on('connection', (ws) => {
+  console.log('Client connected');
+  ws.on('close', () => console.log('Client disconnected'));
 });
+// wss.on('connection', function connection(ws) {
+//   console.log("New connection")
+//   ws.on('message', function incoming(rawdata) {
+//     const data = JSON.parse(rawdata)
+//     // The new connection sent its identifications
+//     if (data.type === "new") {
+//       console.log("New connection identity: ", data)
+//       ws.characterId = data.id || "admin"
+//     }
+//     // User opened a chat
+//     if (data.type === "openChat") {
+//       console.log("Chat was opened, id: ", data.chat)
+//       // send back chat history when chat is opened
+//       mongo.MongoClient.connect(url, function (err, dbclient) {
+//         if (err) throw err
+//         const db = dbclient.db('app')
+//         db.collection('messages').find({ chat: data.chat }).toArray(function (err, result) {
+//           if (err) throw err
+//           console.log("Sent chat history")
+//           ws.send(JSON.stringify({ type: 'history', data: result }));
+//           db.close
+//         })
+//       })
+//     }
+//     // User sent a message in chat
+//     if (data.type === "message") {
+//       console.log("Received a message: ", data)
+//       // Modify for database saving
+//       var obj = {
+//         time: (new Date()).getTime(),
+//         text: data.text,
+//         author: data.name,
+//         authorId: data.characterId,
+//         chat: data.chat._id
+//       };
+//       mongo.MongoClient.connect(url, function (err, client) {
+//         if (err) throw err
+//         const db = client.db('app')
+//         db.collection('messages').insertOne(obj, function (err, result) {
+//           if (err) throw err
+//           db.close
+//         })
+//       })
+//       console.log("Saved message to database")
+//     }
+//     wss.clients.forEach(function each(client) {
+
+//       // User sent a message in chat
+//       if (data.type === "message") {
+//         // Modify for database saving
+//         var obj = {
+//           time: (new Date()).getTime(),
+//           text: data.text,
+//           author: data.name,
+//           authorId: data.id,
+//           chat: data.chat._id
+//         };
+//         // Broadcast if part of the chat
+//         if (client.readyState === WebSocket.OPEN && (client.characterId === "admin" || data.chat.participants.find(a => a._id == client.characterId))) {
+//           console.log("Broadcasted to " + client.characterId)
+//           const packet = { type: "message", data: obj }
+//           client.send(JSON.stringify(packet));
+//         }
+//       }
+//     });
+//   });
+
+
+// });
