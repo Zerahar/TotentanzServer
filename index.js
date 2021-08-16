@@ -12,6 +12,7 @@ app.use(express.json())
   .listen(PORT, () => console.log(`Listening on ${PORT}`));
 
 app.use(cors());
+app.get('/', (req, res) => { res.send('Hello World') })
 
 var mongo = require('mongodb')
 const dev_db_url = `mongodb+srv://dbAdmin:${pass}@cluster0.q4dhm.mongodb.net/app?retryWrites=true&w=majority`
