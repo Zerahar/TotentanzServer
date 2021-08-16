@@ -2,7 +2,7 @@
 const express = require('express');
 const pass = "dbpass123"
 const { Server } = require('ws');
-
+const cors = require('cors')
 const PORT = process.env.PORT || 3000;
 const INDEX = '/index.html';
 
@@ -10,6 +10,8 @@ const app = express()
 
 app.use(express.json())
   .listen(PORT, () => console.log(`Listening on ${PORT}`));
+
+app.use(cors());
 
 var mongo = require('mongodb')
 const dev_db_url = `mongodb+srv://dbAdmin:${pass}@cluster0.q4dhm.mongodb.net/app?retryWrites=true&w=majority`
