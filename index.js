@@ -2,16 +2,14 @@
 const express = require('express');
 const pass = "dbpass123"
 const { Server } = require('ws');
-const cors = require('cors')
 const PORT = process.env.PORT || 3000;
-const INDEX = '/index.html';
 
 const app = express()
 
-app.use(express.json())
+app
+  // .use(express.json())
   .listen(PORT, () => console.log(`Listening on ${PORT}`));
 
-app.use(cors());
 app.get('/', (req, res) => { res.send('Hello World') })
 
 var mongo = require('mongodb')
