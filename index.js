@@ -7,6 +7,7 @@ const PORT = process.env.PORT || 3000;
 const INDEX = '/index.html';
 
 const app = express()
+
 app.use(express.json())
   .listen(PORT, () => console.log(`Listening on ${PORT}`));
 
