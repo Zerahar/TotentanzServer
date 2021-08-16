@@ -2,11 +2,13 @@
 
 const express = require('express');
 const { Server } = require('ws');
+const cors = require('cors')
 
 const PORT = process.env.PORT || 3000;
 
 const server = express()
   .use((req, res) => res.send("Hello"))
+  .use(cors)
   .listen(PORT, () => console.log(`Listening on ${PORT}`));
 
 const wss = new Server({ server });
